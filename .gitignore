@@ -63,3 +63,8 @@ Debug
 # Miscellaneous
 .DS_STORE
 *~
+
+# Xournalpp-vibe specific files
+share*/
+build_instructions.md
+xournalpp-local.desktop
