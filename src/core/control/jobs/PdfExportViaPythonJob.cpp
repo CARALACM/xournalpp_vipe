@@ -43,7 +43,7 @@ void PdfExportViaPythonJob::run() {
         return;
     }
 
-    fs::path scriptPath = Util::getConfigSubfolder() / "test_script.py";
+    fs::path scriptPath = Util::getConfigSubfolder() / "xournalpp_export_script.py";
     std::string command = "python3 \"" + scriptPath.string() + "\" \"" + tempFile.string() + "\" \"" + this->filepath.string() + "\"";
     
     int ret = system(command.c_str());
