@@ -2093,6 +2093,23 @@ void Control::exportAsPdf() {
             });
 }
 
+#include "control/jobs/PdfExportViaPythonJob.h"
+
+void Control::exportAsPdfViaPython() {
+    this->clearSelectionEndText();
+
+    auto* job = new PdfExportViaPythonJob(this);
+    job->showFileChooser(
+            [ctrl = this, job]() {
+                ctrl->scheduler->addJob(job, JOB_PRIORITY_NONE);
+                job->unref();
+            },
+            [ctrl = this, job]() {
+                ctrl->unblock();
+                job->unref();
+            });
+}
+
 void Control::exportAs() {
     this->clearSelectionEndText();
     auto* job = new CustomExportJob(this);

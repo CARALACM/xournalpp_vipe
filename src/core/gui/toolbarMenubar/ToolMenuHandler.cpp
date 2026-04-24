@@ -290,6 +290,7 @@ void ToolMenuHandler::initToolItems() {
     emplaceCustomItem("OPEN", Cat::FILES, Action::OPEN, "document-open", _("Open file"));
     emplaceCustomItem("SAVE", Cat::FILES, Action::SAVE, "document-save", _("Save"));
     emplaceCustomItem("SAVEPDF", Cat::FILES, Action::EXPORT_AS_PDF, "document-export-pdf", _("Export as PDF"));
+    emplaceCustomItem("SAVEPDF_PYTHON", Cat::FILES, Action::EXPORT_AS_PDF_VIA_PYTHON, "document-export-pdf", _("Export as PDF via Python"));
     emplaceCustomItem("PRINT", Cat::FILES, Action::PRINT, "document-print", _("Print"));
 
     /*

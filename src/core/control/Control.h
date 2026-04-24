@@ -116,6 +116,7 @@ public:
 
     void print();
     void exportAsPdf();
+    void exportAsPdfViaPython();
     void exportAs();
     void quit(bool allowCancel = true);
 

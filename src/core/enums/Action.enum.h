@@ -37,6 +37,7 @@ enum class Action : size_t {
     SAVE,
     SAVE_AS,
     EXPORT_AS_PDF,
+    EXPORT_AS_PDF_VIA_PYTHON,
     EXPORT_AS,
     PRINT,
     QUIT,

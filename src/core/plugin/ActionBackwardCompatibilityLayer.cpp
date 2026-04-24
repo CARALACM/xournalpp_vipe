@@ -20,6 +20,7 @@ static const std::map<std::string_view, Action> STATELESS_ACTION_MAP = {
         {"ACTION_SAVE"sv, Action::SAVE},
         {"ACTION_SAVE_AS"sv, Action::SAVE_AS},
         {"ACTION_EXPORT_AS_PDF"sv, Action::EXPORT_AS_PDF},
+        {"ACTION_EXPORT_AS_PDF_VIA_PYTHON"sv, Action::EXPORT_AS_PDF_VIA_PYTHON},
         {"ACTION_EXPORT_AS"sv, Action::EXPORT_AS},
         {"ACTION_PRINT"sv, Action::PRINT},
         {"ACTION_QUIT"sv, Action::QUIT},

@@ -111,6 +111,11 @@ struct ActionProperties<Action::EXPORT_AS_PDF> {
 };
 
 template <>
+struct ActionProperties<Action::EXPORT_AS_PDF_VIA_PYTHON> {
+    static void callback(GSimpleAction*, GVariant*, Control* ctrl) { ctrl->exportAsPdfViaPython(); }
+};
+
+template <>
 struct ActionProperties<Action::EXPORT_AS> {
     static void callback(GSimpleAction*, GVariant*, Control* ctrl) { ctrl->exportAs(); }
 };
