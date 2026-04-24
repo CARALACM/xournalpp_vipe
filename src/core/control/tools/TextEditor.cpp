@@ -1166,4 +1166,5 @@ void TextEditor::initializeEditionAt(double x, double y) {
     this->layout = this->textElement->createPangoLayout();
     this->previousBoundingBox = Range(this->textElement->boundingRect());
     this->replaceBufferContent(this->textElement->getText());
+    this->repaintEditor(true);
 }
