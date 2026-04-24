@@ -1027,6 +1027,39 @@ void TextEditor::finalizeEdition() {
     }
 
     this->updateTextElementContent();
+
+    std::string content = this->textElement->getText();
+    bool hasDoubleDollar = content.find("$$") != std::string::npos;
+    bool hasLatexBrackets = content.find("\\[") != std::string::npos || content.find("\\(") != std::string::npos;
+    bool hasDollarPair = std::count(content.begin(), content.end(), '$') >= 2;
+
+    if (hasDoubleDollar || hasLatexBrackets || hasDollarPair) {
+        std::vector<std::pair<std::string, std::string>> replacements = {
+            {"\\alpha", "α"}, {"\\beta", "β"}, {"\\gamma", "γ"}, {"\\Gamma", "Γ"},
+            {"\\delta", "δ"}, {"\\Delta", "Δ"}, {"\\epsilon", "ε"}, {"\\zeta", "ζ"},
+            {"\\eta", "η"}, {"\\theta", "θ"}, {"\\Theta", "Θ"}, {"\\iota", "ι"},
+            {"\\kappa", "κ"}, {"\\lambda", "λ"}, {"\\Lambda", "Λ"}, {"\\mu", "μ"},
+            {"\\nu", "ν"}, {"\\xi", "ξ"}, {"\\Xi", "Ξ"}, {"\\pi", "π"},
+            {"\\Pi", "Π"}, {"\\rho", "ρ"}, {"\\sigma", "σ"}, {"\\Sigma", "Σ"},
+            {"\\tau", "τ"}, {"\\upsilon", "υ"}, {"\\phi", "φ"}, {"\\Phi", "Φ"},
+            {"\\chi", "χ"}, {"\\psi", "ψ"}, {"\\Psi", "Ψ"}, {"\\omega", "ω"},
+            {"\\Omega", "Ω"}, {"\\infty", "∞"}, {"\\pm", "±"}, {"\\neq", "≠"},
+            {"\\approx", "≈"}, {"\\times", "×"}, {"\\div", "÷"}, {"\\leq", "≤"},
+            {"\\geq", "≥"}, {"\\int", "∫"}, {"\\rightarrow", "→"}, {"\\leftarrow", "←"},
+            {"\\Rightarrow", "⇒"}, {"\\Leftarrow", "⇐"}, {"\\leftrightarrow", "↔"},
+            {"\\Leftrightarrow", "⇔"}, {"\\[", ""}, {"\\]", ""}, {"\\(", ""}, {"\\)", ""},
+            {"$$", ""}, {"$", ""}
+        };
+        for (const auto& pair : replacements) {
+            size_t pos = 0;
+            while ((pos = content.find(pair.first, pos)) != std::string::npos) {
+                content.replace(pos, pair.first.length(), pair.second);
+                pos += pair.second.length();
+            }
+        }
+        this->textElement->setText(content);
+    }
+    
     if (originalTextElement) {
         // Modifying a preexisting element
         this->viewPool->dispatchAndClear(xoj::view::TextEditionView::FINALIZATION_REQUEST, this->previousBoundingBox);
