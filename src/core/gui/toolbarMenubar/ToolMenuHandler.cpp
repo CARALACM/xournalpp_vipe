@@ -359,6 +359,8 @@ void ToolMenuHandler::initToolItems() {
 
     emplaceCustomItem("GOTO_NEXT_ANNOTATED_PAGE", Cat::NAVIGATION, Action::GOTO_NEXT_ANNOTATED_PAGE,
                       "page-annotated-next", _("Next annotated page"));
+    emplaceStockItem("SCROLL_TO_LAST_ANNOTATION", Cat::NAVIGATION, Action::SCROLL_TO_LAST_ANNOTATION,
+                     "go-bottom", _("Scroll to last annotation"));
 
     /* Menu Journal
      * ------------------------------------------------------------------------

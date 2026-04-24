@@ -435,6 +435,10 @@
      <attribute name="action">win.goto-previous-annotated-page</attribute>
      <attribute name="accel">&lt;Ctrl&gt;&lt;Shift&gt;Page_Up</attribute>
     </item>
+    <item>
+     <attribute name="label" translatable="yes">Scroll to Last Annotation</attribute>
+     <attribute name="action">win.scroll-to-last-annotation</attribute>
+    </item>
    </section>
   </submenu>
   <submenu>

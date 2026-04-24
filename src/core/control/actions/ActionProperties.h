@@ -500,6 +500,13 @@ struct ActionProperties<Action::GOTO_PREVIOUS_ANNOTATED_PAGE> {
 };
 
 template <>
+struct ActionProperties<Action::SCROLL_TO_LAST_ANNOTATION> {
+    static void callback(GSimpleAction*, GVariant*, Control* ctrl) {
+        ctrl->getScrollHandler()->scrollToLastAnnotationOnCurrentPage();
+    }
+};
+
+template <>
 struct ActionProperties<Action::NAVIGATE_BACK> {
     static bool initiallyEnabled(Control*) { return false; }
     static constexpr const char* accelerators[] = {"<Alt>Left", nullptr};

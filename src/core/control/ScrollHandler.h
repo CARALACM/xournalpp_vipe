@@ -43,6 +43,7 @@ public:
     void jumpToPage(size_t page, XojPdfRectangle rect = {0, 0, -1, -1});
 
     void scrollToAnnotatedPage(bool next);
+    void scrollToLastAnnotationOnCurrentPage();
 
     /**
      * Scroll to a given link's destination, provided the

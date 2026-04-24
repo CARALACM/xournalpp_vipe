@@ -131,6 +131,40 @@ void ScrollHandler::scrollToAnnotatedPage(bool next) {
     }
 }
 
+void ScrollHandler::scrollToLastAnnotationOnCurrentPage() {
+    if (!this->control->getWindow()) {
+        return;
+    }
+
+    size_t pageNo = this->control->getCurrentPageNo();
+    Document* doc = this->control->getDocument();
+
+    if (!doc || pageNo >= doc->getPageCount()) {
+        return;
+    }
+
+    doc->lock_shared();
+    PageRef page = doc->getPage(pageNo);
+
+    double maxY = -1;
+    bool found = false;
+
+    for (const Layer* l : page->getLayersView()) {
+        for (const Element* e : l->getElementsView()) {
+            double bottom = e->getY() + e->getElementHeight();
+            if (!found || bottom > maxY) {
+                maxY = bottom;
+                found = true;
+            }
+        }
+    }
+    doc->unlock_shared();
+
+    if (found) {
+        jumpToPage(pageNo, {0, maxY, 10, maxY + 10});
+    }
+}
+
 auto ScrollHandler::isPageVisible(size_t page, int* visibleHeight) -> bool {
     if (!this->control->getWindow()) {
         if (visibleHeight) {
