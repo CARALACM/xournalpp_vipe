@@ -898,23 +898,10 @@ void TextEditor::setTextToPangoLayout(PangoLayout* pl) const {
 
         pango_layout_set_attributes(pl, attrlist.get());
 
-        GError* error = nullptr;
-        if (!pango_parse_markup(txt.c_str(), static_cast<int>(txt.length()), 0, nullptr, nullptr, nullptr, &error)) {
-            pango_layout_set_text(pl, txt.c_str(), static_cast<int>(txt.length()));
-            g_clear_error(&error);
-        } else {
-            pango_layout_set_markup(pl, txt.c_str(), static_cast<int>(txt.length()));
-        }
+        pango_layout_set_text(pl, txt.c_str(), static_cast<int>(txt.length()));
     } else {
         setSelectionAttributesToPangoLayout(pl);
-        auto cstr = cloneToCString(this->buffer.get());
-        GError* error = nullptr;
-        if (!pango_parse_markup(cstr.get(), -1, 0, nullptr, nullptr, nullptr, &error)) {
-            pango_layout_set_text(pl, cstr.get(), -1);
-            g_clear_error(&error);
-        } else {
-            pango_layout_set_markup(pl, cstr.get(), -1);
-        }
+        pango_layout_set_text(pl, cloneToCString(this->buffer.get()).get(), -1);
     }
 }
 
