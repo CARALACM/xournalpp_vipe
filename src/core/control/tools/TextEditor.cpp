@@ -1035,9 +1035,6 @@ void TextEditor::finalizeEdition() {
     bool hasDollarPair = std::count(content.begin(), content.end(), '$') >= 2;
 
     if (hasDoubleDollar || hasLatexBrackets || hasDollarPair) {
-        std::regex fracRegex("\\\\frac\\{([^\\}]+)\\}\\{([^\\}]+)\\}");
-        content = std::regex_replace(content, fracRegex, "$1 / $2");
-
         // Formato de texto LaTeX a HTML Pango
         content = std::regex_replace(content, std::regex("\\\\textbf\\{([^\\}]+)\\}"), "<b>$1</b>");
         content = std::regex_replace(content, std::regex("\\\\textit\\{([^\\}]+)\\}"), "<i>$1</i>");
