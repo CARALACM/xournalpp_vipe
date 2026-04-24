@@ -4,6 +4,7 @@
 #include <memory>   // for allocator, make_unique, __shared_p...
 #include <string>   // for std::string()
 #include <utility>  // for move
+#include <regex>    // for regex_replace
 
 #include <gdk/gdkkeysyms.h>  // for GDK_KEY_B, GDK_KEY_ISO_Enter, GDK_...
 #include <glib-object.h>     // for g_object_get, g_object_unref, G_CA...
@@ -1034,20 +1035,36 @@ void TextEditor::finalizeEdition() {
     bool hasDollarPair = std::count(content.begin(), content.end(), '$') >= 2;
 
     if (hasDoubleDollar || hasLatexBrackets || hasDollarPair) {
+        std::regex fracRegex("\\\\frac\\{([^\\}]+)\\}\\{([^\\}]+)\\}");
+        content = std::regex_replace(content, fracRegex, "$1 / $2");
+
         std::vector<std::pair<std::string, std::string>> replacements = {
+            {"\\partial", "∂"}, {"\\nabla", "∇"},
             {"\\alpha", "α"}, {"\\beta", "β"}, {"\\gamma", "γ"}, {"\\Gamma", "Γ"},
-            {"\\delta", "δ"}, {"\\Delta", "Δ"}, {"\\epsilon", "ε"}, {"\\zeta", "ζ"},
-            {"\\eta", "η"}, {"\\theta", "θ"}, {"\\Theta", "Θ"}, {"\\iota", "ι"},
-            {"\\kappa", "κ"}, {"\\lambda", "λ"}, {"\\Lambda", "Λ"}, {"\\mu", "μ"},
-            {"\\nu", "ν"}, {"\\xi", "ξ"}, {"\\Xi", "Ξ"}, {"\\pi", "π"},
-            {"\\Pi", "Π"}, {"\\rho", "ρ"}, {"\\sigma", "σ"}, {"\\Sigma", "Σ"},
-            {"\\tau", "τ"}, {"\\upsilon", "υ"}, {"\\phi", "φ"}, {"\\Phi", "Φ"},
-            {"\\chi", "χ"}, {"\\psi", "ψ"}, {"\\Psi", "Ψ"}, {"\\omega", "ω"},
-            {"\\Omega", "Ω"}, {"\\infty", "∞"}, {"\\pm", "±"}, {"\\neq", "≠"},
-            {"\\approx", "≈"}, {"\\times", "×"}, {"\\div", "÷"}, {"\\leq", "≤"},
-            {"\\geq", "≥"}, {"\\int", "∫"}, {"\\rightarrow", "→"}, {"\\leftarrow", "←"},
-            {"\\Rightarrow", "⇒"}, {"\\Leftarrow", "⇐"}, {"\\leftrightarrow", "↔"},
-            {"\\Leftrightarrow", "⇔"}, {"\\[", ""}, {"\\]", ""}, {"\\(", ""}, {"\\)", ""},
+            {"\\delta", "δ"}, {"\\Delta", "Δ"}, {"\\epsilon", "ε"}, {"\\varepsilon", "ε"}, 
+            {"\\zeta", "ζ"}, {"\\eta", "η"}, {"\\theta", "θ"}, {"\\Theta", "Θ"}, {"\\vartheta", "ϑ"},
+            {"\\iota", "ι"}, {"\\kappa", "κ"}, {"\\lambda", "λ"}, {"\\Lambda", "Λ"},
+            {"\\mu", "μ"}, {"\\nu", "ν"}, {"\\xi", "ξ"}, {"\\Xi", "Ξ"},
+            {"\\pi", "π"}, {"\\Pi", "Π"}, {"\\rho", "ρ"}, {"\\varrho", "ϱ"}, 
+            {"\\sigma", "σ"}, {"\\Sigma", "Σ"}, {"\\tau", "τ"}, {"\\upsilon", "υ"}, {"\\Upsilon", "Υ"},
+            {"\\phi", "φ"}, {"\\Phi", "Φ"}, {"\\varphi", "ϕ"}, {"\\chi", "χ"},
+            {"\\psi", "ψ"}, {"\\Psi", "Ψ"}, {"\\omega", "ω"}, {"\\Omega", "Ω"},
+            {"\\infty", "∞"}, {"\\pm", "±"}, {"\\mp", "∓"}, {"\\neq", "≠"},
+            {"\\approx", "≈"}, {"\\equiv", "≡"}, {"\\sim", "∼"}, {"\\cong", "≅"},
+            {"\\propto", "∝"}, {"\\times", "×"}, {"\\cdot", "⋅"}, {"\\div", "÷"},
+            {"\\leq", "≤"}, {"\\geq", "≥"}, {"\\ll", "≪"}, {"\\gg", "≫"},
+            {"\\in", "∈"}, {"\\notin", "∉"}, {"\\subset", "⊂"}, {"\\supset", "⊃"},
+            {"\\subseteq", "⊆"}, {"\\supseteq", "⊇"}, {"\\empty", "∅"}, {"\\emptyset", "∅"},
+            {"\\int", "∫"}, {"\\iint", "∬"}, {"\\iiint", "∭"}, {"\\oint", "∮"},
+            {"\\sum", "∑"}, {"\\prod", "∏"},
+            {"\\forall", "∀"}, {"\\exists", "∃"}, {"\\nexists", "∄"},
+            {"\\leftarrow", "←"}, {"\\rightarrow", "→"}, {"\\uparrow", "↑"}, {"\\downarrow", "↓"},
+            {"\\Leftarrow", "⇐"}, {"\\Rightarrow", "⇒"}, {"\\Uparrow", "⇑"}, {"\\Downarrow", "⇓"},
+            {"\\leftrightarrow", "↔"}, {"\\Leftrightarrow", "⇔"},
+            {"\\circ", "∘"}, {"\\bullet", "∙"}, {"\\ast", "∗"}, {"\\star", "⋆"},
+            {"\\oplus", "⊕"}, {"\\otimes", "⊗"}, {"\\odot", "⊙"},
+            {"\\aleph", "ℵ"}, {"\\Re", "ℜ"}, {"\\Im", "ℑ"}, {"\\wp", "℘"}, {"\\angle", "∠"},
+            {"\\[", ""}, {"\\]", ""}, {"\\(", ""}, {"\\)", ""},
             {"$$", ""}, {"$", ""}
         };
         for (const auto& pair : replacements) {
