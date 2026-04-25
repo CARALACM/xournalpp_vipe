@@ -22,6 +22,7 @@ using xoj::util::Rectangle;
 Text::Text(): AudioElement(ELEMENT_TEXT) {
     this->font.setName("Sans");
     this->font.setSize(12);
+    this->lineSpacing = 0.6666;
 }
 
 Text::~Text() = default;
@@ -59,20 +60,40 @@ auto Text::getFontSize() const -> double { return font.getSize(); }
 auto Text::getFontName() const -> std::string { return font.getName(); }
 
 auto Text::getText() const -> const std::string& { return this->text; }
+auto Text::getTextWithoutTags() const -> const std::string& { return this->textWithoutTags; }
 
 void Text::setText(std::string text) {
     this->text = std::move(text);
+    this->textWithoutTags = this->text;
+    this->lineSpacing = 0.6666;
+
+    // Parse line spacing tag %%ls:VALUE%%
+    if (size_t pos = this->textWithoutTags.find("%%ls:"); pos != std::string::npos) {
+        size_t end = this->textWithoutTags.find("%%", pos + 5);
+        if (end != std::string::npos) {
+            std::string valStr = this->textWithoutTags.substr(pos + 5, end - (pos + 5));
+            try {
+                this->lineSpacing = std::stod(valStr);
+                this->textWithoutTags.erase(pos, end + 2 - pos);
+            } catch (...) {
+                // Ignore invalid values
+            }
+        }
+    }
+
     sizeCalculated = false;
 }
+
+auto Text::getLineSpacing() const -> double { return this->lineSpacing; }
 
 void Text::calcSize() const {
     auto layout = createPangoLayout();
     GError* error = nullptr;
-    if (!pango_parse_markup(this->text.c_str(), static_cast<int>(this->text.length()), 0, nullptr, nullptr, nullptr, &error)) {
-        pango_layout_set_text(layout.get(), this->text.c_str(), static_cast<int>(this->text.length()));
+    if (!pango_parse_markup(this->textWithoutTags.c_str(), static_cast<int>(this->textWithoutTags.length()), 0, nullptr, nullptr, nullptr, &error)) {
+        pango_layout_set_text(layout.get(), this->textWithoutTags.c_str(), static_cast<int>(this->textWithoutTags.length()));
         g_clear_error(&error);
     } else {
-        pango_layout_set_markup(layout.get(), this->text.c_str(), static_cast<int>(this->text.length()));
+        pango_layout_set_markup(layout.get(), this->textWithoutTags.c_str(), static_cast<int>(this->textWithoutTags.length()));
     }
 
     if (this->wrapWidth > 0) {
@@ -114,7 +135,7 @@ auto Text::createPangoLayout() const -> xoj::util::GObjectSPtr<PangoLayout> {
     xoj::util::GObjectSPtr<PangoLayout> layout(pango_layout_new(c.get()), xoj::util::adopt);
 
 #if PANGO_VERSION_CHECK(1, 48, 5)  // see https://gitlab.gnome.org/GNOME/pango/-/issues/499
-    pango_layout_set_line_spacing(layout.get(), 1.0);
+    pango_layout_set_line_spacing(layout.get(), this->lineSpacing);
 #endif
 
     updatePangoFont(layout.get());
@@ -174,7 +195,7 @@ void Text::readSerialized(ObjectInputStream& in) {
 
     this->AudioElement::readSerialized(in);
 
-    this->text = in.readString();
+    this->setText(in.readString());
 
     font.readSerialized(in);
 
@@ -193,15 +214,15 @@ auto Text::findText(const std::string& search) const -> std::vector<XojPdfRectan
 
     auto layout = this->createPangoLayout();
     GError* error = nullptr;
-    if (!pango_parse_markup(this->text.c_str(), static_cast<int>(this->text.length()), 0, nullptr, nullptr, nullptr, &error)) {
-        pango_layout_set_text(layout.get(), this->text.c_str(), static_cast<int>(this->text.length()));
+    if (!pango_parse_markup(this->textWithoutTags.c_str(), static_cast<int>(this->textWithoutTags.length()), 0, nullptr, nullptr, nullptr, &error)) {
+        pango_layout_set_text(layout.get(), this->textWithoutTags.c_str(), static_cast<int>(this->textWithoutTags.length()));
         g_clear_error(&error);
     } else {
-        pango_layout_set_markup(layout.get(), this->text.c_str(), static_cast<int>(this->text.length()));
+        pango_layout_set_markup(layout.get(), this->textWithoutTags.c_str(), static_cast<int>(this->textWithoutTags.length()));
     }
 
 
-    std::string text = StringUtils::toLowerCase(this->text);
+    std::string text = StringUtils::toLowerCase(this->textWithoutTags);
 
     std::string pattern = StringUtils::toLowerCase(search);
 

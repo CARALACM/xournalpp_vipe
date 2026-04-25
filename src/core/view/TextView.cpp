@@ -46,7 +46,7 @@ void TextView::draw(const Context& ctx) const {
     cairo_translate(ctx.cr, text->getX(), text->getY());
 
     auto layout = initPango(ctx.cr, text);
-    const std::string& content = text->getText();
+    const std::string& content = text->getTextWithoutTags();
     GError* error = nullptr;
     if (!pango_parse_markup(content.c_str(), static_cast<int>(content.length()), 0, nullptr, nullptr, nullptr, &error)) {
         pango_layout_set_text(layout.get(), content.c_str(), static_cast<int>(content.length()));

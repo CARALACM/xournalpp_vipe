@@ -44,4 +44,5 @@ constexpr static char CFG_ROUND_MARGIN[] = "rm";
 constexpr static char CFG_RASTER[] = "r1";
 constexpr static char CFG_BOLD_LINE_INTERVAL[] = "bli";
 constexpr static char CFG_BOLD_LINE_WIDTH[] = "blw";
+constexpr static char CFG_PAGE_BREAK_INTERVAL[] = "pb";
 }  // namespace background_config_strings

@@ -888,20 +888,33 @@ void TextEditor::setTextToPangoLayout(PangoLayout* pl) const {
 
     std::string_view preed(preeditString);
 
+    std::string currentText;
     if (!preed.empty()) {
-        // When using an Input Method, we need to insert the preeditString into the text at the cursor location
-        std::string txt = cloneWithInsertToStdString(this->buffer.get(), preed);
+        currentText = cloneWithInsertToStdString(this->buffer.get(), preed);
+    } else {
+        currentText = cloneToStdString(this->buffer.get());
+    }
 
+    // Update text element so it parses tags and calculates lineSpacing
+    this->textElement->setText(currentText);
+
+#if PANGO_VERSION_CHECK(1, 48, 5)
+    pango_layout_set_line_spacing(pl, this->textElement->getLineSpacing());
+#endif
+
+    const std::string& stripped = this->textElement->getTextWithoutTags();
+
+    if (!preed.empty()) {
         int pos = getByteOffsetOfCursor(this->buffer.get());
         xoj::util::PangoAttrListSPtr attrlist(pango_attr_list_new(), xoj::util::adopt);
         pango_attr_list_splice(attrlist.get(), this->preeditAttrList.get(), pos, static_cast<int>(preed.length()));
 
         pango_layout_set_attributes(pl, attrlist.get());
 
-        pango_layout_set_text(pl, txt.c_str(), static_cast<int>(txt.length()));
+        pango_layout_set_text(pl, stripped.c_str(), static_cast<int>(stripped.length()));
     } else {
         setSelectionAttributesToPangoLayout(pl);
-        pango_layout_set_text(pl, cloneToCString(this->buffer.get()).get(), -1);
+        pango_layout_set_text(pl, stripped.c_str(), static_cast<int>(stripped.length()));
     }
 }
 

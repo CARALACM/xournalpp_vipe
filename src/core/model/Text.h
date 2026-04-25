@@ -40,7 +40,10 @@ public:
     std::string getFontName() const;  // same result as getFont()->getName(), but const
 
     const std::string& getText() const;
+    const std::string& getTextWithoutTags() const;
     void setText(std::string text);
+
+    double getLineSpacing() const;
 
     void setWidth(double width);
     void setHeight(double height);
@@ -78,8 +81,10 @@ private:
     XojFont font;
 
     std::string text;
+    std::string textWithoutTags;
 
     double wrapWidth = -1.0;
+    double lineSpacing = 0.6666;
 
     bool inEditing = false;
 };

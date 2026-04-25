@@ -33,6 +33,7 @@ protected:
     double squareSize = 14.17;  // 5mm
     int boldLineInterval = 0;   // 0 means no bold lines, otherwise every Nth line is bold
     double boldLineWidth = 1.5;
+    double pageBreakInterval = 0.0;
 
     constexpr static Color DEFAULT_LINE_COLOR = Colors::xopp_silver;
     constexpr static Color ALT_DEFAULT_LINE_COLOR = Colors::xopp_darkslategray;

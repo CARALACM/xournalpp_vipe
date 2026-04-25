@@ -47,3 +47,8 @@ name=Graph with border (bold every 5th)
 format=graph
 config=m1=20,rm=1,bli=5,blw=1
 
+[graphLetterGuide]
+name=Graph with Letter Guides
+format=graph
+config=r1=12,pb=792,blw=2
+

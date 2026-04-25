@@ -21,6 +21,7 @@ GraphBackgroundView::GraphBackgroundView(double pageWidth, double pageHeight, Co
     config.loadValue(CFG_MARGIN, margin);
     config.loadValue(CFG_BOLD_LINE_INTERVAL, boldLineInterval);
     config.loadValue(CFG_BOLD_LINE_WIDTH, boldLineWidth);
+    config.loadValue(CFG_PAGE_BREAK_INTERVAL, pageBreakInterval);
 
     if (int roundToGrid = 0; margin > 0.0 && config.loadValue(CFG_ROUND_MARGIN, roundToGrid) && roundToGrid) {
         roundUpMargin = true;
@@ -127,6 +128,22 @@ void GraphBackgroundView::draw(cairo_t* cr) const {
                 double y = i * squareSize;
                 cairo_move_to(cr, minX, y);
                 cairo_line_to(cr, maxX, y);
+            }
+        }
+        cairo_stroke(cr);
+    }
+
+    if (pageBreakInterval > 0.0) {
+        cairo_set_line_width(cr, boldLineWidth);
+        if (minX < maxX) {
+            int first = static_cast<int>(std::floor(minY / pageBreakInterval));
+            int last = static_cast<int>(std::floor(maxY / pageBreakInterval));
+            for (int i = first; i <= last; ++i) {
+                double y = i * pageBreakInterval;
+                if (y >= minY && y <= maxY) {
+                    cairo_move_to(cr, minX, y);
+                    cairo_line_to(cr, maxX, y);
+                }
             }
         }
         cairo_stroke(cr);
