@@ -204,6 +204,13 @@ private:
     bool cursorOverwrite = false;
     bool cursorVisible = false;
 
+    /**
+     * @brief Tracks the last cursor Y position (in TextElement-local coordinates) for which
+     * the view was scrolled. Used to auto-scroll the viewport so the active line stays
+     * visible at the top of the screen when using an on-screen keyboard.
+     */
+    double lastScrolledCursorY = -1e9;
+
     // In a blinking period, how much time is the cursor visible vs not visible
     static constexpr unsigned int CURSOR_ON_MULTIPLIER = 2;
     static constexpr unsigned int CURSOR_OFF_MULTIPLIER = 1;

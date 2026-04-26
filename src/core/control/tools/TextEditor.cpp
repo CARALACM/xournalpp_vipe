@@ -12,6 +12,10 @@
 #include "control/AudioController.h"
 #include "control/Control.h"  // for Control
 #include "control/settings/Settings.h"
+#include "gui/Layout.h"         // for Layout::scrollAbs
+#include "gui/MainWindow.h"     // for MainWindow::getXournal
+#include "gui/PageView.h"       // for XojPageView::getPixelPosition
+#include "gui/XournalView.h"    // for XournalView::getLayout, getViewFor
 #include "gui/XournalppCursor.h"  // for XournalppCursor
 #include "model/Document.h"       // for Document
 #include "model/Font.h"           // for XojFont
@@ -663,6 +667,37 @@ void TextEditor::updateCursorBox() {
         cursorRect.height = static_cast<int>(box.height);
         cursorRect.width = static_cast<int>(box.width);
         gtk_im_context_set_cursor_location(this->imContext.get(), &cursorRect);
+    }
+
+    // Scroll so the active cursor line is always at the top of the visible area.
+    // This is especially useful when an on-screen keyboard covers the bottom of the screen.
+    double newCursorY = this->cursorBox.minY;
+    if (std::abs(newCursorY - this->lastScrolledCursorY) > 0.5) {
+        this->lastScrolledCursorY = newCursorY;
+
+        MainWindow* win = this->control->getWindow();
+        if (win) {
+            XournalView* xournal = win->getXournal();
+            auto* doc = this->control->getDocument();
+            doc->lock_shared();
+            size_t pageIdx = doc->indexOf(this->page);
+            doc->unlock_shared();
+
+            XojPageView* pageView = xournal->getViewFor(pageIdx);
+            if (pageView) {
+                double zoom = xournal->getZoom();
+                Layout* layout = xournal->getLayout();
+                auto visRect = layout->getVisibleRect();
+
+                // Cursor Y position in layout pixel coordinates
+                double cursorLayoutY = pageView->getPixelPosition().y +
+                                       (this->textElement->getY() + newCursorY) * zoom;
+
+                // Scroll vertically so the active line appears at the top with a small margin
+                constexpr double TOP_MARGIN_PX = 100.0;
+                layout->scrollAbs(visRect.x, cursorLayoutY - TOP_MARGIN_PX);
+            }
+        }
     }
 }
 
