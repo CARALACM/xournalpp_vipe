@@ -1056,8 +1056,8 @@ void TextEditor::finalizeEdition() {
         content = std::regex_replace(content, std::regex("\\\\texttt\\{([^\\}]+)\\}"), "<tt>$1</tt>");
         content = std::regex_replace(content, std::regex("\\\\textcolor\\{([^\\}]+)\\}\\{([^\\}]+)\\}"), "<span color=\"$1\">$2</span>");
         content = std::regex_replace(content, std::regex("\\\\sout\\{([^\\}]+)\\}"), "<s>$1</s>");
-        content = std::regex_replace(content, std::regex("\\\\scriptsize\\{([^\\}]+)\\}"), "<span size=\"x-small\">$1</span>");
-        content = std::regex_replace(content, std::regex("\\\\footnotesize\\{([^\\}]+)\\}"), "<span size=\"small\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\scriptsize\\{([^\\}]+)\\}"), "<span size=\"xx-small\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\footnotesize\\{([^\\}]+)\\}"), "<span size=\"x-small\">$1</span>");
         content = std::regex_replace(content, std::regex("\\\\small\\{([^\\}]+)\\}"), "<span size=\"small\">$1</span>");
         content = std::regex_replace(content, std::regex("\\\\large\\{([^\\}]+)\\}"), "<span size=\"large\">$1</span>");
         content = std::regex_replace(content, std::regex("\\\\Large\\{([^\\}]+)\\}"), "<span size=\"x-large\">$1</span>");
