@@ -1055,6 +1055,20 @@ void TextEditor::finalizeEdition() {
         content = std::regex_replace(content, std::regex("\\\\underline\\{([^\\}]+)\\}"), "<u>$1</u>");
         content = std::regex_replace(content, std::regex("\\\\texttt\\{([^\\}]+)\\}"), "<tt>$1</tt>");
         content = std::regex_replace(content, std::regex("\\\\textcolor\\{([^\\}]+)\\}\\{([^\\}]+)\\}"), "<span color=\"$1\">$2</span>");
+        content = std::regex_replace(content, std::regex("\\\\sout\\{([^\\}]+)\\}"), "<s>$1</s>");
+        content = std::regex_replace(content, std::regex("\\\\scriptsize\\{([^\\}]+)\\}"), "<span size=\"x-small\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\footnotesize\\{([^\\}]+)\\}"), "<span size=\"small\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\small\\{([^\\}]+)\\}"), "<span size=\"small\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\large\\{([^\\}]+)\\}"), "<span size=\"large\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\Large\\{([^\\}]+)\\}"), "<span size=\"x-large\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\LARGE\\{([^\\}]+)\\}"), "<span size=\"xx-large\">$1</span>");
+        content = std::regex_replace(content, std::regex("\\\\textsuperscript\\{([^\\}]+)\\}"), "<sup>$1</sup>");
+        content = std::regex_replace(content, std::regex("\\\\textsubscript\\{([^\\}]+)\\}"), "<sub>$1</sub>");
+        content = std::regex_replace(content, std::regex("\\^\\{([^\\}]+)\\}"), "<sup>$1</sup>");
+        content = std::regex_replace(content, std::regex("_\\{([^\\}]+)\\}"), "<sub>$1</sub>");
+        
+
+
 
 
         std::vector<std::pair<std::string, std::string>> replacements = {
@@ -1093,6 +1107,13 @@ void TextEditor::finalizeEdition() {
                 pos += pair.second.length();
             }
         }
+
+        // Convertir punto inicial en cada línea en un bullet (soporta espacios al inicio)
+        content = std::regex_replace(content, std::regex("(^|\n)[ \t]*\\."), "$1• ");
+        
+        // Convertir guión inicial en cada línea en un En Dash (–)
+        content = std::regex_replace(content, std::regex("(^|\n)[ \t]*-"), "$1⁃ ");
+
         this->textElement->setText(content);
     }
     
