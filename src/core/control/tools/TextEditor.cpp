@@ -1041,8 +1041,8 @@ void TextEditor::finalizeEdition() {
     }
 
     this->updateTextElementContent();
-
-    std::string content = this->textElement->getText();
+    std::string originalContent = this->textElement->getText();
+    std::string content = originalContent;
     bool hasDoubleDollar = content.find("$$") != std::string::npos;
     bool hasLatexBrackets = content.find("\\[") != std::string::npos || content.find("\\(") != std::string::npos;
     bool hasDollarPair = std::count(content.begin(), content.end(), '$') >= 2;
@@ -1113,6 +1113,15 @@ void TextEditor::finalizeEdition() {
         
         // Convertir guión inicial en cada línea en un En Dash (–)
         content = std::regex_replace(content, std::regex("(^|\n)[ \t]*-"), "$1⁃ ");
+
+        // Guardar el original en un atributo oculto para poder editarlo después
+        std::string escapedSource = originalContent;
+        escapedSource = std::regex_replace(escapedSource, std::regex("&"), "&amp;");
+        escapedSource = std::regex_replace(escapedSource, std::regex("\""), "&quot;");
+        escapedSource = std::regex_replace(escapedSource, std::regex("<"), "&lt;");
+        escapedSource = std::regex_replace(escapedSource, std::regex(">"), "&gt;");
+        
+        content = content + "<span alpha=\"1\" size=\"1\">" + escapedSource + "</span>";
 
         this->textElement->setText(content);
     }
@@ -1199,6 +1208,23 @@ void TextEditor::initializeEditionAt(double x, double y) {
     }
     this->layout = this->textElement->createPangoLayout();
     this->previousBoundingBox = Range(this->textElement->boundingRect());
-    this->replaceBufferContent(this->textElement->getText());
+    std::string textValue = this->textElement->getText();
+    
+    // Intentar recuperar el texto original si fue formateado como LaTeX
+    size_t sourcePos = textValue.find("<span alpha=\"1\" size=\"1\">");
+    if (sourcePos != std::string::npos) {
+        size_t start = sourcePos + 25; // Largo de <span alpha="1" size="1">
+        size_t end = textValue.find("</span>", start);
+        if (end != std::string::npos) {
+            std::string source = textValue.substr(start, end - start);
+            source = std::regex_replace(source, std::regex("&quot;"), "\"");
+            source = std::regex_replace(source, std::regex("&lt;"), "<");
+            source = std::regex_replace(source, std::regex("&gt;"), ">");
+            source = std::regex_replace(source, std::regex("&amp;"), "&");
+            textValue = source;
+        }
+    }
+
+    this->replaceBufferContent(textValue);
     this->repaintEditor(true);
 }
