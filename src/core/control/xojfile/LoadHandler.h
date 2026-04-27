@@ -110,10 +110,12 @@ private:
     void setTexImageData(std::string data) override;
     void setTexImageAttachment(const fs::path& filename) override;
     void finalizeTexImage() override;
+    void setElementCreationDate(std::string date) override;
 
     void logError(const std::string& error) override;
 
 private:
+    std::string pendingDate;
     /**
      * Open a file for reading
      * If the file is a zip file, initializes `zipFp` for access to the other

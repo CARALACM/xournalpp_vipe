@@ -86,9 +86,14 @@ public:
     void serialize(ObjectOutputStream& out) const override;
     void readSerialized(ObjectInputStream& in) override;
 
+    void setCreationDate(std::string date);
+    const std::string& getCreationDate() const;
+
 private:
 protected:
     virtual void calcSize() const = 0;
+
+    std::string creationDate;
 
 protected:
     // If the size has been calculated

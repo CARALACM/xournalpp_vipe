@@ -172,6 +172,10 @@ void SaveHandler::visitLayer(XmlNode* page, const Layer* l) {
     }
 
     for (const auto& e: l->getElementsView()) {
+        if (!e->getCreationDate().empty()) {
+            layer->addChild(new XmlTextNode(TAG_NAMES[TagType::DATE], e->getCreationDate()));
+        }
+
         if (e->getType() == ELEMENT_STROKE) {
             auto* s = dynamic_cast<const Stroke*>(e);
             auto* stroke = new XmlPointNode(TAG_NAMES[TagType::STROKE]);

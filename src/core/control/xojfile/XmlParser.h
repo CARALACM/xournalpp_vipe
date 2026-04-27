@@ -77,6 +77,7 @@ private:
     void parseTexImageTag(const XmlParserHelper::AttributeMap& attributeMap);
     void parseTexImageText(std::string_view text);
     void parseAttachmentTag(const XmlParserHelper::AttributeMap& attributeMap);
+    void parseDateText(std::string_view text);
 
     /**
      * Get the tag type from a given element name
@@ -125,6 +126,7 @@ private:
                     {&XmlParser::parseTexImageTag, &XmlParser::parseTexImageText,
                      &DocumentBuilderInterface::finalizeTexImage},  // TagType::TEXIMAGE
                     {&XmlParser::parseAttachmentTag, {}, {}},       // TagType::ATTACHMENT
+                    {{}, &XmlParser::parseDateText, {}},            // TagType::DATE
             }}};
 
     // Builder interface to which the parsed data is forwarded

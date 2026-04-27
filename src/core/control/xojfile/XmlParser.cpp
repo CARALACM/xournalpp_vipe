@@ -479,6 +479,8 @@ void XmlParser::parseTexImageText(std::string_view text) {
     }
 }
 
+void XmlParser::parseDateText(std::string_view text) { this->builder.setElementCreationDate(std::string{text}); }
+
 void XmlParser::parseAttachmentTag(const XmlParserHelper::AttributeMap& attributeMap) {
     const auto path = XmlParserHelper::getAttribMandatory<fs::path>(xoj::xml_attrs::PATH_STR, attributeMap);
 
@@ -543,6 +545,8 @@ auto XmlParser::getTagType(c_string_utf8_view name) const -> TagType {
                     return TagType::IMAGE;
                 if (TAG_NAMES[TagType::TEXIMAGE] == name)
                     return TagType::TEXIMAGE;
+                if (TAG_NAMES[TagType::DATE] == name)
+                    return TagType::DATE;
                 break;
             case TagType::IMAGE:
             case TagType::TEXIMAGE:

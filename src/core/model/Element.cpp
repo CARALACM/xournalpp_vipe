@@ -10,9 +10,23 @@
 #include "util/serializing/ObjectInputStream.h"   // for ObjectInputStream
 #include "util/serializing/ObjectOutputStream.h"  // for ObjectOutputStream
 
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
 using xoj::util::Rectangle;
 
-Element::Element(ElementType type): type(type) {}
+Element::Element(ElementType type): type(type) {
+    std::time_t t = std::time(nullptr);
+    std::tm* now = std::localtime(&t);
+    char buf[20];
+    std::strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", now);
+    this->creationDate = std::string(buf);
+}
+
+void Element::setCreationDate(std::string date) { this->creationDate = std::move(date); }
+
+const std::string& Element::getCreationDate() const { return this->creationDate; }
 
 auto Element::getType() const -> ElementType { return this->type; }
 

@@ -300,6 +300,14 @@ void LoadHandler::finalizeLayer() {
     this->page->addLayer(this->layer.release());
 }
 
+void LoadHandler::finalizeTexImage() {
+    xoj_assert(this->teximage);
+
+    this->layer->addElement(std::move(this->teximage));
+}
+
+void LoadHandler::setElementCreationDate(std::string date) { this->pendingDate = std::move(date); }
+
 void LoadHandler::addStroke(StrokeTool tool, Color color, double width, int fill, StrokeCapStyle capStyle,
                             const LineStyle& lineStyle, fs::path filename, size_t timestamp) {
     xoj_assert(!this->stroke);
@@ -311,6 +319,8 @@ void LoadHandler::addStroke(StrokeTool tool, Color color, double width, int fill
     this->stroke->setFill(fill);
     this->stroke->setStrokeCapStyle(capStyle);
     this->stroke->setLineStyle(lineStyle);
+    this->stroke->setCreationDate(std::move(this->pendingDate));
+    this->pendingDate.clear();
 
     setAudioAttributes(*this->stroke, std::move(filename), timestamp);
 }
@@ -360,6 +370,8 @@ void LoadHandler::addText(std::string font, double size, double x, double y, Col
     this->text->setX(x);
     this->text->setY(y);
     this->text->setColor(color);
+    this->text->setCreationDate(std::move(this->pendingDate));
+    this->pendingDate.clear();
     if (this->page) {
         constexpr double RIGHT_PADDING = 20.0;
         this->text->setWrapWidth(std::max(0.0, this->page->getWidth() - x - RIGHT_PADDING));
@@ -388,6 +400,8 @@ void LoadHandler::addImage(double left, double top, double right, double bottom)
     this->image->setY(top);
     this->image->setWidth(right - left);
     this->image->setHeight(bottom - top);
+    this->image->setCreationDate(std::move(this->pendingDate));
+    this->pendingDate.clear();
 }
 
 void LoadHandler::setImageData(std::string data) {
@@ -435,6 +449,8 @@ void LoadHandler::addTexImage(double left, double top, double right, double bott
     this->teximage->setHeight(bottom - top);
 
     this->teximage->setText(std::move(text));
+    this->teximage->setCreationDate(std::move(this->pendingDate));
+    this->pendingDate.clear();
 }
 
 void LoadHandler::setTexImageData(std::string data) {
@@ -452,11 +468,7 @@ void LoadHandler::setTexImageAttachment(const fs::path& filename) {
     }
 }
 
-void LoadHandler::finalizeTexImage() {
-    xoj_assert(this->teximage);
 
-    this->layer->addElement(std::move(this->teximage));
-}
 
 void LoadHandler::logError(const std::string& error) {
     g_warning("LoadHandler: %s", error.c_str());
