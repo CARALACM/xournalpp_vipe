@@ -1,4 +1,4 @@
-# Xournal++ Vibe (Auto Breakline Fork)
+# Xournal++ - Vibe
 
 This is a personal fork of the [Xournal++](https://github.com/xournalpp/xournalpp) project.
 
